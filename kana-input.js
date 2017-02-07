@@ -289,7 +289,7 @@
     var input = e.target,
       mode = input.dataset ? input.dataset.kanaInput : false;
 
-    submitAnswer();
+    checkAnswer();
     if (mode !== 'hiragana' && mode !== 'katakana') {
       return;
     }
