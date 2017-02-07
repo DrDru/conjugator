@@ -1,39 +1,36 @@
 function Modifier(flags, modFunc) {
-  if(this instanceof Modifier == false)
+  if (this instanceof Modifier == false)
     return new Modifier(flags, modFunc);
 
-  try{
+  try {
     this.flag = flags.map(function(f){return f[1];});
     this.desc = flags.map(function(f){return f[0];});
     this.modFunc = modFunc;
-  } catch(e){
+  } catch (e) {
     console.error(flags, modFunc);
-  };
+  }
 }
 
-function Term(word, kanji, ruby, def) {
-    if(this instanceof Term == false)
-      return new Term(word, kanji, def);
-    this.word = word;
-    this.kanji = '';
-    this.ruby = word;
-
-    if ($("#opt-kanji:checked").length == 0)
-      this.kanji = kanji;
-    if (this.kanji)
-      this.ruby = ruby;
-    this.def = def;
-};
+// Furigana is an array containing the furigana for any existing kanji.
+// The index into the array represents the index of the character in the variable
+// "term" to which the furigana should be applied.
+function Term(word, hiragana, furigana, definition) {
+  this.word = word;
+  this.hiragana = hiragana;
+  this.furigana = furigana;
+  this.definition = definition;
+}
 
 Term.prototype.render = function() {
-  if ($("#opt-kanji:checked").length == 0)
-    return this.word;
-
-  if ($("#opt-furigana:checked").length == 1)
-    return this.ruby || this.word;
-
-  return this.kanji || this.word;
-}
+  if ($("#opt-kanji:checked").length == 0) {
+    return this.hiragana;
+  }
+  if ($("#opt-furigana:checked").length == 1 && this.furigana) {
+    console.log(this.furigana);
+    return furiganize(this.word, this.furigana);
+  }
+  return this.word;
+};
 
 var KANA_FAM = {
   V: ['わ','え','い','お','う'],
@@ -282,6 +279,7 @@ var ICHIDAN = [
     }),
     // polite negative potential
     Modifier([ModTypes.FORMAL, ModTypes.NEGATIVE, ModTypes.POTENTIAL], function(w) {
+      console.log('word is ' + w);
         return trimLast(w) + 'られません';
     }),
     // polite negative imperative

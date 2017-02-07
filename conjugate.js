@@ -154,15 +154,14 @@ $(document).ready(function() {
 });
 
 function Question(term) {
-    if(!(this instanceof Question))
-      return new Question(term);
+  if (!(this instanceof Question)) {
+    return new Question(term);
+  }
+  console.log(term);
 
-    this.word = term.word;
-    this.kanji = '';
-    if ($("#opt-kanji:checked").length == 1)
-      this.kanji = term.kanji;
-    this.base = term.kanji || term.word;
-    this.modList = [];
+  this.word = term.word;
+  this.hiragana = term.hiragana;
+  this.modList = [];
 }
 
 Question.prototype.modify = function(modSet, skipNext) {
@@ -259,7 +258,7 @@ function nextQuestion() {
 
     console.log(correct.join(", "));
     $('#question-word').html(term.render());
-    $('#meaning').html(term.def);
+    $('#meaning').html(term.definition);
     $('#mods .mod').remove();
     $('#answer').val('');
     $('#well').data('mods', question.modList.map(listCopy));
@@ -298,24 +297,24 @@ function pickType() {
       if($("#opt-godan:checked").length)
         sets.push([GODAN, godan, '[godan] v.']);
 
-      if($("#opt-irregular:checked").length)
-      {
-        sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
-        sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
-      }
-
-      if($("#opt-naadj:checked").length)
-        sets.push([NA_ADJECTIVE, na_adjective, '[na] adj.']);
-
-      if($("#opt-iadj:checked").length)
-        sets.push([II_ADJECTIVE, ii_adjective, '[i] adj.']);
-
-      // keep last
-      if($("#opt-to_be:checked").length || !sets.length)
-      {
-        sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
-        sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
-      }
+      // if($("#opt-irregular:checked").length)
+      // {
+      //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
+      //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
+      // }
+      //
+      // if($("#opt-naadj:checked").length)
+      //   sets.push([NA_ADJECTIVE, na_adjective, '[na] adj.']);
+      //
+      // if($("#opt-iadj:checked").length)
+      //   sets.push([II_ADJECTIVE, i_adjective, '[i] adj.']);
+      //
+      // // keep last
+      // if($("#opt-to_be:checked").length || !sets.length)
+      // {
+      //   sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
+      //   sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
+      // }
 
       // remove config-disabled modifiers
       filterSets(sets);
@@ -341,7 +340,8 @@ function pickType() {
 
 // Returns the word without the last kana
 function trimLast(word) {
-    return word.substring(0, word.length - 1);
+  console.log('word is ' + word);
+  return word.substring(0, word.length - 1);
 }
 
 function snipLast(word) {
