@@ -11,6 +11,8 @@ var termType = '';
 var skipped = false;
 var scored = false;
 
+var termSets = null;
+
 $(document).ready(function() {
   // Stop the user from pressing enter in the text area
   $('textarea').bind('keypress', function(e) {
@@ -24,6 +26,7 @@ $(document).ready(function() {
   // When the play button is clicked
   $('#play').add("#optplay").click(function() {
     nextQuestion();
+
     $('#start-screen').animate({top: '-1000px'}, 800);
     $('#main').show();
     $('#option-menu').hide();
@@ -42,50 +45,42 @@ $(document).ready(function() {
     $('#ribbon img').animate({'height': '50px', 'width': '50px'}, 800);
   });
 
-  function debugTerm(e) {
-    var wi = $(e.target).parents('.wellitem:first');
-    if(wi.data('done'))
-    {
-      wi.data('done', false).find('.debug-out').remove();
+  function debugTerm(clickEvent) {
+    var item = $(clickEvent.target).parents('.wellitem:first');
+    if (item.data('done')) {
+      item.data('done', false).find('.debug-out').remove();
       return;
     }
 
-    var d = wi.data();
-    var term = d.term;
-    var typeMods = d.type;
+    var data = item.data();
+    var term = data.term;
+    var typeMods = data.type;
 
-    var w = $('<div/>')
-    .addClass('debug-out');
+    var w = $('<div/>').addClass('debug-out');
 
     w.append("<hr />");
-    typeMods.forEach(function(mod)
-    {
+    typeMods.forEach(function(mod) {
       debugMod(term, mod, w);
     });
 
-    wi.append(w).data('done', true);
-  };
+    item.append(w).data('done', true);
+  }
 
   function debugMod(term, mod, w, premods) {
-    var q = Question({"word": term});
-    if(premods)
-    {
-      premods.forEach(function(m)
-      {
-          q.modify([m]);
+    var q = Question(term);
+    if (premods) {
+      premods.forEach(function(m) {
+        q.modify([m]);
       });
-    }
-    else {
+    } else {
       premods = [];
     }
-
     var newmods = premods.filter(listCopy);
     newmods.push(mod);
     q.modify([mod], true);
 
     var desc = $.unique($.merge([], q.modifiers).filter(filterFalse));
-    if(desc.length)
-    {
+    if(desc.length) {
       w.append(q.word + " - " + desc.join(', '))
       .append("<br />");
     }
@@ -232,12 +227,14 @@ function setTimeBar(percent) {
 // Generate a new question
 function nextQuestion() {
   console.clear();
+
   scored = false;
   skipped = false;
+
   setTimeBar(100);
   time = 100 * timeMax;
 
-  var wordset = pickType(),
+  var wordset = pickNextTermSet(),
     type = wordset[0],
     terms = wordset[1],
     pos = wordset[2];
@@ -249,13 +246,14 @@ function nextQuestion() {
   var question = new Question(term);
   question.modify(type);
   correct = ([question.word, question.hiragana]).filter(filterFalse);
-  quiz_term = term.word;
+  quiz_term = term;
 
   $('#question-word').html(term.render());
   $('#meaning').html(term.definition());
   $('#mods .mod').remove();
   $('#answer').val('');
   $('#well').data('mods', question.modifiers.map(listCopy));
+
   fadeInMods(question.modifiers);
 }
 
@@ -277,67 +275,65 @@ function fadeInMods(modList) {
   }
 }
 
-// Picks a type of word to make the next question about
+// Picks a set of terms to choose the new question term from.
 // This function returns the object dictionary so it can be passed around easily
-var sets = null
-function pickType() {
-    var sum = 0;
-    if (sets == null) {
-      sets = [];
-      if ($("#opt-ichidan:checked").length) {
-        sets.push([ICHIDAN, verbs_ichidan, '[ichidan] v.']);
-      }
-      if ($("#opt-godan:checked").length) {
-        sets.push([GODAN, verbs_godan, '[godan] v.']);
-      }
+function pickNextTermSet() {
+  if (termSets == null) {
+    initializeTermSets();
+  }
 
-      // if($("#opt-irregular:checked").length)
-      // {
-      //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
-      //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
-      // }
-      //
-      // if($("#opt-naadj:checked").length)
-      //   sets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
-      //
-      // if($("#opt-iadj:checked").length)
-      //   sets.push([II_ADJECTIVE, adjective_i, '[i] adj.']);
-      //
-      // // keep last
-      // if($("#opt-to_be:checked").length || !sets.length)
-      // {
-      //   sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
-      //   sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
-      // }
+  if (termSets.length == 1) {
+    return termSets[0];
+  }
 
-      // remove config-disabled modifiers
-      filterSets(sets);
+  var totalNumberOfTerms = 0;
+  termSets.forEach(function(set) {
+    totalNumberOfTerms += set[1].length;
+  });
+
+  var randomNumber = Math.floor(Math.random() * totalNumberOfTerms);
+  var chosenIndex = 0;
+  for (var i = 0; i < termSets.length; i++) {
+    var set = termSets[i];
+    if (randomNumber < set[1].length) {
+      break;
     }
-
-    if (sets.length == 1)
-      return sets[0];
-
-    sets.forEach(function(s) {
-      sum += s[1].length;
-    });
-
-    var rando = ~~(Math.random() * sum);
-    var i = 0;
-    do {
-      if (rando < sets[i][1].length)
-        return sets[i];
-      rando -= sets[i][1].length;
-      i++;
-    } while (i < sets.length);
+    randomNumber -= set[1].length;
+    chosenIndex++;
+  }
+  return termSets[chosenIndex];
 }
 
-// Returns the word without the last kana
-function trimLast(word) {
-  return word.substring(0, word.length - 1);
-}
+function initializeTermSets() {
+  termSets = [];
+  if ($("#opt-ichidan:checked").length) {
+    termSets.push([ICHIDAN, verbs_ichidan, '[ichidan] v.']);
+  }
+  if ($("#opt-godan:checked").length) {
+    termSets.push([GODAN, verbs_godan, '[godan] v.']);
+  }
 
-function snipLast(word) {
-  return word.substr(-1);
+  // if($("#opt-irregular:checked").length)
+  // {
+  //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
+  //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
+  // }
+  //
+  // if($("#opt-naadj:checked").length)
+  //   sets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
+  //
+  // if($("#opt-iadj:checked").length)
+  //   sets.push([II_ADJECTIVE, adjective_i, '[i] adj.']);
+  //
+  // // keep last
+  // if($("#opt-to_be:checked").length || !sets.length)
+  // {
+  //   sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
+  //   sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
+  // }
+
+  // remove config-disabled modifiers
+  filterSets(termSets);
 }
 
 // Timer function called 100 times per second

@@ -19,8 +19,17 @@ var KANA_FAMILY = {
     N: ['な','に','ぬ','ね','の'],
     M: ['ま','み','む','め','も'],
     R: ['ら','り','る','れ','ろ'],
-    Y: ['や', null, 'ゆ', null, 'よ'],
+    Y: ['や', null, 'ゆ', null, 'よ']
 };
+
+// Returns the word without the last kana
+function trimLast(word) {
+  return word.substring(0, word.length - 1);
+}
+
+function snipLast(word) {
+  return word.substr(-1);
+}
 
 function Modifier(flags, modFunc) {
   if (this instanceof Modifier == false) {
@@ -39,7 +48,7 @@ var Mogrify = {
   _mog: function(kana, index) {
     for (base in KANA_FAMILY) {
       if (KANA_FAMILY[base].indexOf(kana) != -1) {
-        return KANA_FAMILY[base][index]
+        return KANA_FAMILY[base][index];
       }
     }
     console.error("No mogrification for kana: " + kana);

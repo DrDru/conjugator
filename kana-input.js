@@ -7,23 +7,19 @@
   var _ = function (input) {
 
     return {
-
       insert: function (newStr, position) {
         newStr = newStr || '';
         position = Math.max(0, Math.min(position, input.length));
-
         return input.substr(0, position) + newStr + input.substr(position);
       },
 
       remove: function (length, position) {
         length = Math.min(length, position);
         position = Math.max(0, Math.min(position, input.length));
-
         return input.substr(0, position - length) + input.substr(position);
       },
 
       setCaretPosition: function (position) {
-
         if (input.setSelectionRange) {
           input.setSelectionRange(position, position);
         } else if (input.createTextRange) {
@@ -214,7 +210,6 @@
   };
 
   root.onkeypress = function (e) {
-
     var input = e.target,
       kanaInput = input.dataset ? input.dataset.kanaInput : false;
 
@@ -259,7 +254,6 @@
   };
 
   root.onkeydown = function (e) {
-
     var input = e.target,
       kanaInput = input.dataset ? input.dataset.kanaInput : false;
 
@@ -285,16 +279,11 @@
   };
 
   root.onkeyup = function (e) {
-
-    var input = e.target,
-      mode = input.dataset ? input.dataset.kanaInput : false;
-
+    var input = e.target, mode = input.dataset ? input.dataset.kanaInput : false;
+    // TODO(andrea): answer checking probably shouldn't be part of the input logic?
     checkAnswer();
     if (mode !== 'hiragana' && mode !== 'katakana') {
       return;
     }
-
   };
-
 }).call(this);
-

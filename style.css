@@ -90,14 +90,16 @@ body {
 
 #question {
     font-size: 30pt;
+    line-height: 1em;
+    margin-bottom: 1em;
 }
 
 #def {
     font-size: 18pt;
+    font-family: sans-serif;
 }
 
 #meaning {
-    font-family: 'Lucida Bright', Georgia, serif;
     color: #707070;
 }
 
@@ -121,20 +123,26 @@ body {
   margin-bottom: 60px;
 }
 
+#mods {
+    margin-bottom: 1em;
+}
+
 .mod {
-    font-size: 15pt;
+    font-family: sans-serif;
+    display: inline;
+    font-size: 14pt;
     color: #ecf0f1;
-    background: #e74c3c;
+    background: #555;
     float: left;
     margin-right: 5px;
-    padding: 0px 5px;
+    padding: 10px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
 
 .mod:hover {
-    background: #e74c3c;
+    background: #13a4e7;
 }
 
 .space {
@@ -144,6 +152,7 @@ body {
 }
 
 #scoreboard {
+    font-family: Consolas, monospace;
     position: absolute;
     top: 0px;
     right: 0px;
@@ -152,11 +161,7 @@ body {
     border-radius: 5px;
     width: 150px;
     text-align: right;
-}
-
-#score {
-    font-family: 'Lucida Bright', Georgia, serif;
-    font-size: 12pt;
+    font-size: 1.2em;
 }
 
 .lb-text {
@@ -164,7 +169,7 @@ body {
 }
 
 #mult {
-    font-size: 16pt;
+    font-weight: bold;
 }
 
 #part {
@@ -251,8 +256,12 @@ input[type=checkbox] {
     visibility: hidden;
 }
 
+#answer {
+    font-size: 35pt;
+}
+
 /**/
-#well{
+#well {
     margin-top:32px;
 }
 
@@ -277,7 +286,8 @@ input[type=checkbox] {
 }
 
 .wellitem .mods {
-  display:block;
+  font-family: sans-serif;
+  display: block;
   width: 60%;
 }
 
