@@ -152,8 +152,8 @@ function Question(term) {
   if (!(this instanceof Question)) {
     return new Question(term);
   }
-  this.word = term.word;
-  this.hiragana = term.hiragana;
+  this.word = term.kanjiRepresentation();
+  this.hiragana = term.hiraganaRepresentation();
   this.modifiers = [];
 }
 
@@ -186,7 +186,7 @@ function skipQuestion() {
     $('#mult').text(mult);
     $('#answer').addClass('flash-red');
     $('#time-bar').css('background', '#e74c3c');
-    addWell($('#answer').val()||'', correct, quiz_term, false);
+    addWell($('#answer').val() || '', correct, quiz_term, false);
     $('#answer').val(correct[0]);
     setTimeout(function() {
       $('#answer').removeClass('flash-red');
@@ -197,7 +197,6 @@ function skipQuestion() {
 // Check if the answer is correct every time a character is typed
 function checkAnswer() {
   if (skipped || scored) return;
-
   var ans = $('#answer').val().replace(/\s/g, '');
   if (correct.indexOf(ans) > -1 && !skipped) {
     $('#answer').addClass('flash');
@@ -252,9 +251,8 @@ function nextQuestion() {
   correct = ([question.word, question.hiragana]).filter(filterFalse);
   quiz_term = term.word;
 
-  console.log(correct.join(", "));
   $('#question-word').html(term.render());
-  $('#meaning').html(term.definition);
+  $('#meaning').html(term.definition());
   $('#mods .mod').remove();
   $('#answer').val('');
   $('#well').data('mods', question.modifiers.map(listCopy));
@@ -284,14 +282,14 @@ function fadeInMods(modList) {
 var sets = null
 function pickType() {
     var sum = 0;
-    if(sets == null)
-    {
+    if (sets == null) {
       sets = [];
-      if($("#opt-ichidan:checked").length)
-        sets.push([ICHIDAN, ichidan, '[ichidan] v.']);
-
-      if($("#opt-godan:checked").length)
-        sets.push([GODAN, godan, '[godan] v.']);
+      if ($("#opt-ichidan:checked").length) {
+        sets.push([ICHIDAN, verbs_ichidan, '[ichidan] v.']);
+      }
+      if ($("#opt-godan:checked").length) {
+        sets.push([GODAN, verbs_godan, '[godan] v.']);
+      }
 
       // if($("#opt-irregular:checked").length)
       // {
@@ -300,10 +298,10 @@ function pickType() {
       // }
       //
       // if($("#opt-naadj:checked").length)
-      //   sets.push([NA_ADJECTIVE, na_adjective, '[na] adj.']);
+      //   sets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
       //
       // if($("#opt-iadj:checked").length)
-      //   sets.push([II_ADJECTIVE, i_adjective, '[i] adj.']);
+      //   sets.push([II_ADJECTIVE, adjective_i, '[i] adj.']);
       //
       // // keep last
       // if($("#opt-to_be:checked").length || !sets.length)
@@ -316,20 +314,19 @@ function pickType() {
       filterSets(sets);
     }
 
-    if(sets.length == 1)
+    if (sets.length == 1)
       return sets[0];
 
-    sets.forEach(function(s)
-    {
+    sets.forEach(function(s) {
       sum += s[1].length;
     });
 
     var rando = ~~(Math.random() * sum);
-    var i=0
+    var i = 0;
     do {
-      if(rando < sets[i][1].length)
-        return sets[i]
-      rando -= sets[i][1].length
+      if (rando < sets[i][1].length)
+        return sets[i];
+      rando -= sets[i][1].length;
       i++;
     } while (i < sets.length);
 }
@@ -356,71 +353,69 @@ var t = setInterval(interval, 10);
 
 function addWell(actual, expected, rootword, isCorrect) {
   var mods = $('#well')
-  .data('mods')
-  .filter(filterFalse)
-  .join(", ");
+      .data('mods')
+      .filter(filterFalse)
+      .join(", ");
 
   var def = $("#meaning").text();
-  if(!def)
+  if (!def) {
     return;
+  }
 
   var w = $('<div/>')
-  .addClass('wellitem')
-  .data({
-      type: termType,
-      term: rootword
-  });
+      .addClass('wellitem')
+      .data({
+        type: termType,
+        term: rootword
+      });
 
   w.append(
-    $("<span/>")
-    .addClass("well-right")
-    .addClass("mods")
-    .append(def + " &mdash; ")
-    .append(mods + " ")
-    .append(
       $("<span/>")
-      .addClass('debug')
-      .text('≟')
-      .attr({
-        title: "Click to view conjugations."
-      })
-    )
+          .addClass("well-right")
+          .addClass("mods")
+          .append(def + " &mdash; ")
+          .append(mods + " ")
+          .append(
+              $("<span/>")
+                  .addClass('debug')
+                  .text('≟')
+                  .attr({
+                    title: "Click to view conjugations."
+                  })
+          )
   );
 
   var expected_link = $("<a/>")
-  .html($.unique(expected).join('<br />'))
-  .addClass("answers")
-  .attr({
-    href: "http://jisho.org/search/" + encodeURIComponent(rootword),
-    target: "jisho",
-    title: "Jisho - " + rootword + " - click Show Inflections to review conjugations."
-  });
+      .html($.unique(expected).join('<br />'))
+      .addClass("answers")
+      .attr({
+        href: "http://jisho.org/search/" + encodeURIComponent(rootword),
+        target: "jisho",
+        title: "Jisho - " + rootword + " - click Show Inflections to review conjugations."
+      });
 
   var wellLeft = $("<div />")
-  .addClass("well-left")
-  .append(expected_link);
+      .addClass("well-left")
+      .append(expected_link);
 
-  if(isCorrect) {
-    w.addClass('correct')
-    .append(wellLeft);
-  }
-  else
-  {
+  if (isCorrect) {
+    w.addClass('correct').append(wellLeft);
+  } else {
     if(actual.replace(/\s/g,'')) {
       wellLeft.prepend(
-        $('<span/>')
-        .addClass("response")
-        .addClass('striken')
-        .html(actual + "<br />")
+          $('<span/>')
+              .addClass("response")
+              .addClass('striken')
+              .html(actual + "<br />")
       );
     }
 
     w.addClass('skipped')
-    .append(wellLeft);
+        .append(wellLeft);
   }
 
   w.append(
-    $('<div/>').addClass('clear')
+      $('<div/>').addClass('clear')
   );
 
   $('#well').prepend(w);
