@@ -24,25 +24,19 @@ $(document).ready(function() {
   });
 
   // When the play button is clicked
-  $('#play').add("#optplay").click(function() {
+  $('#play').add("#options-play").click(function() {
     nextQuestion();
-
-    $('#start-screen').animate({top: '-1000px'}, 800);
-    $('#main').show();
-    $('#option-menu').hide();
-    $('#main').animate({'margin-top': '20px'}, 800);
-    $('#title-text').animate({'width': '350px', 'font-size': '20pt', 'height': '40px', 'bottom': '5px', 'margin-bottom': '0px'}, 800);
-    $('#title').animate({'height': '50px'}, 800);
-    $('#ribbon img').animate({'height': '50px', 'width': '50px'}, 800);
+    $('body')
+        .removeClass('start')
+        .removeClass('options')
+        .addClass('game');
   });
 
   $('#options').click(function() {
-    $('#start-screen').animate({top: '-1000px'}, 800);
-    $('#option-menu').show();
-    $('#option-menu').animate({'margin-top': '20px'}, 800);
-    $('#title-text').animate({'width': '350px', 'font-size': '20pt', 'height': '40px', 'bottom': '5px', 'margin-bottom': '0px'}, 800);
-    $('#title').animate({'height': '50px'}, 800);
-    $('#ribbon img').animate({'height': '50px', 'width': '50px'}, 800);
+    $('body')
+        .removeClass('start')
+        .removeClass('game')
+        .addClass('options');
   });
 
   function debugTerm(clickEvent) {
@@ -86,60 +80,60 @@ $(document).ready(function() {
     }
   };
 
-    $('#well').on('click', '.debug', debugTerm);
+  $('#well').on('click', '.debug', debugTerm);
 
-    var genOpts = function(id, opts) {
-      opts.forEach(function(opt) {
-        opt[1] = "opt-" + opt[1];
-        opt.unshift($("#"+id));
-        genFullOption.apply(this, opt)
-      });
-    };
-
-    genOpts('adjective-options', [
-      ['い adjectives', 'iadj'],
-      ['な adjectives', 'naadj']
-    ]);
-
-    genOpts('conjugation-options', [
-      ModTypes.FORMAL,
-      ModTypes.INFORMAL,
-      ModTypes.PAST,
-      ModTypes.NEGATIVE,
-      ModTypes.TE,
-      ModTypes.IMPERATIVE,
-      ModTypes.VOLITIONAL,
-      ModTypes.WANTING,
-      ModTypes.PROGRESSIVE,
-      ModTypes.PASSIVE,
-      ModTypes.POTENTIAL,
-      ModTypes.CAUSATIVE,
-      ModTypes.CONDITIONAL_BA,
-      ModTypes.CONDITIONAL_TARA
-    ]);
-
-    genOpts('verb-options',[
-      ['To be (いる, ある)', 'to_be'],
-      ['Ichidan (-いる,　-える)', 'ichidan'],
-      ['Irregular (する,　来る)', 'irregular'],
-      ['Godan', 'godan']
-    ]);
-
-    genOpts('kanji-options',[
-      ['Show and Accept Kanji', 'kanji'],
-      ['Show Furigana', 'furigana'],
-    ]);
-
-    $("#option-menu input:checkbox")
-    .change(function()
-    {
-      location.hash = configString();
-    })
-    .each(function(i)
-    {
-      $(this).data("cfg", Math.pow(2, i));
+  var genOpts = function(id, opts) {
+    opts.forEach(function(opt) {
+      opt[1] = "opt-" + opt[1];
+      opt.unshift($("#"+id));
+      genFullOption.apply(this, opt)
     });
-    setConfig(location.hash.replace(/^\#/, ''));
+  };
+
+  genOpts('adjective-options', [
+    ['い adjectives', 'iadj'],
+    ['な adjectives', 'naadj']
+  ]);
+
+  genOpts('conjugation-options', [
+    ModTypes.FORMAL,
+    ModTypes.INFORMAL,
+    ModTypes.PAST,
+    ModTypes.NEGATIVE,
+    ModTypes.TE,
+    ModTypes.IMPERATIVE,
+    ModTypes.VOLITIONAL,
+    ModTypes.WANTING,
+    ModTypes.PROGRESSIVE,
+    ModTypes.PASSIVE,
+    ModTypes.POTENTIAL,
+    ModTypes.CAUSATIVE,
+    ModTypes.CONDITIONAL_BA,
+    ModTypes.CONDITIONAL_TARA
+  ]);
+
+  genOpts('verb-options',[
+    ['To be (いる, ある)', 'to_be'],
+    ['Ichidan (-いる,　-える)', 'ichidan'],
+    ['Irregular (する,　来る)', 'irregular'],
+    ['Godan', 'godan']
+  ]);
+
+  genOpts('kanji-options',[
+    ['Show and Accept Kanji', 'kanji'],
+    ['Show Furigana', 'furigana'],
+  ]);
+
+  $("#option-menu input:checkbox")
+  .change(function()
+  {
+    location.hash = configString();
+  })
+  .each(function(i)
+  {
+    $(this).data("cfg", Math.pow(2, i));
+  });
+  setConfig(location.hash.replace(/^\#/, ''));
 
 });
 
