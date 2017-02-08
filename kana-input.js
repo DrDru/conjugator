@@ -280,8 +280,6 @@
 
   root.onkeyup = function (e) {
     var input = e.target, mode = input.dataset ? input.dataset.kanaInput : false;
-    // TODO(andrea): answer checking probably shouldn't be part of the input logic?
-    checkAnswer();
     if (mode !== 'hiragana' && mode !== 'katakana') {
       return;
     }

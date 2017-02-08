@@ -1,28 +1,25 @@
 'use strict';
 
-var score = 0;
+
 var time = 0;
-var mult = 1;
+
 var _timeMax = 30;
 var timeMax = _timeMax;
-var correct = '';
-var quiz_term = '';
-var termType = '';
-var skipped = false;
-var scored = false;
 
+var STATE = {
+  ASKING: 0,
+  EVALUATED: 1
+};
+
+var correctAnswers = '';
+var currentMultiplier = 1;
+var currentState = STATE.ASKING;
+var currentTerm = '';
+var currentTermType = '';
+var score = 0;
 var termSets = null;
 
 $(document).ready(function() {
-  // Stop the user from pressing enter in the text area
-  $('textarea').bind('keypress', function(e) {
-    if ((e.keyCode || e.which) == 13) {
-      $(this).parents('form').submit();
-      skipQuestion();
-      return false;
-    }
-  });
-
   // When the play button is clicked
   $('#play').add("#options-play").click(function() {
     nextQuestion();
@@ -39,63 +36,32 @@ $(document).ready(function() {
         .addClass('options');
   });
 
-  function debugTerm(clickEvent) {
-    var item = $(clickEvent.target).parents('.wellitem:first');
-    if (item.data('done')) {
-      item.data('done', false).find('.debug-out').remove();
-      return;
+  // Bind the game logic to keyup/keydown handlers on the answer text field.
+  $('#answer').bind('keyup', function(e) {
+    if (currentState == STATE.ASKING) {
+      checkAnswer();
+      return true;
     }
-
-    var data = item.data();
-    var term = data.term;
-    var typeMods = data.type;
-
-    var w = $('<div/>').addClass('debug-out');
-
-    w.append("<hr />");
-    typeMods.forEach(function(mod) {
-      debugMod(term, mod, w);
-    });
-
-    item.append(w).data('done', true);
-  }
-
-  function debugMod(term, mod, w, premods) {
-    var q = Question(term);
-    if (premods) {
-      premods.forEach(function(m) {
-        q.modify([m]);
-      });
-    } else {
-      premods = [];
+  });
+  $('#answer').bind('keydown', function(e) {
+    if ((e.keyCode || e.which) == 13) {
+      if (currentState == STATE.ASKING) {
+        skipQuestion();
+      } else if (currentState == STATE.EVALUATED) {
+        nextQuestion();
+      }
+      return false;
     }
-    var newmods = premods.filter(listCopy);
-    newmods.push(mod);
-    q.modify([mod], true);
-
-    var desc = $.unique($.merge([], q.modifiers).filter(filterFalse));
-    if(desc.length) {
-      w.append(q.word + " - " + desc.join(', '))
-      .append("<br />");
-    }
-  };
+  });
 
   $('#well').on('click', '.debug', debugTerm);
 
-  var genOpts = function(id, opts) {
-    opts.forEach(function(opt) {
-      opt[1] = "opt-" + opt[1];
-      opt.unshift($("#"+id));
-      genFullOption.apply(this, opt)
-    });
-  };
-
-  genOpts('adjective-options', [
+  generateOptions('adjective-options', [
     ['い adjectives', 'iadj'],
     ['な adjectives', 'naadj']
   ]);
 
-  genOpts('conjugation-options', [
+  generateOptions('conjugation-options', [
     ModTypes.FORMAL,
     ModTypes.INFORMAL,
     ModTypes.PAST,
@@ -112,138 +78,46 @@ $(document).ready(function() {
     ModTypes.CONDITIONAL_TARA
   ]);
 
-  genOpts('verb-options',[
+  generateOptions('verb-options',[
     ['To be (いる, ある)', 'to_be'],
     ['Ichidan (-いる,　-える)', 'ichidan'],
     ['Irregular (する,　来る)', 'irregular'],
     ['Godan', 'godan']
   ]);
 
-  genOpts('kanji-options',[
+  generateOptions('kanji-options',[
     ['Show and Accept Kanji', 'kanji'],
     ['Show Furigana', 'furigana'],
   ]);
 
-  $("#option-menu input:checkbox")
-  .change(function()
-  {
+  $("#option-menu input:checkbox").change(function() {
     location.hash = configString();
-  })
-  .each(function(i)
-  {
+  }).each(function(i) {
     $(this).data("cfg", Math.pow(2, i));
   });
   setConfig(location.hash.replace(/^\#/, ''));
-
 });
-
-function Question(term) {
-  if (!(this instanceof Question)) {
-    return new Question(term);
-  }
-  this.word = term.kanjiRepresentation();
-  this.hiragana = term.hiraganaRepresentation();
-  this.modifiers = [];
-}
-
-Question.prototype.modify = function(modSet) {
-  if (!modSet.length) return;
-  // pick and apply a random mod
-  var modifier = getRandom(modSet);
-
-  this.word = modifier.toApply(this.word);
-  if (this.hiragana) {
-    this.hiragana = modifier.toApply(this.hiragana);
-  }
-  this.modifiers.push.apply(this.modifiers, modifier.description);
-};
-
-// Fetches a random element of an array
-function getRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-// Skips a question and shows the correct answer
-function skipQuestion() {
-  if (skipped || scored) {
-    nextQuestion();
-  } else {
-    skipped = true;
-    scored = false;
-    time = -1;
-    mult = 1;
-    $('#mult').text(mult);
-    $('#answer').addClass('flash-red');
-    $('#time-bar').css('background', '#e74c3c');
-    addWell($('#answer').val() || '', correct, quiz_term, false);
-    $('#answer').val(correct[0]);
-    setTimeout(function() {
-      $('#answer').removeClass('flash-red');
-    }, 300);
-  }
-}
-
-// Check if the answer is correct every time a character is typed
-function checkAnswer() {
-  if (skipped || scored) return;
-  var ans = $('#answer').val().replace(/\s/g, '');
-  if (correct.indexOf(ans) > -1 && !skipped) {
-    $('#answer').addClass('flash');
-    setTimeout(function(){
-      $('#answer').removeClass('flash');
-    }, 300);
-
-    if (time > 0) {
-      score += Math.ceil(time * mult / timeMax);
-      mult += 1;
-      timeMax *= 0.95;
-    } else {
-      mult = 1;
-      timeMax = _timeMax;
-    }
-
-    addWell(ans, correct, quiz_term, true);
-    $('#score').text(score);
-    $('#mult').text(mult);
-    scored = true;
-  }
-}
-
-// Sets time remaining bar to the percentage passed in
-function setTimeBar(percent) {
-    $('#time-bar').css('background-image', 'linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-    $('#time-bar').css('background-image', '-o-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-    $('#time-bar').css('background-image', '-moz-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-    $('#time-bar').css('background-image', '-webkit-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-    $('#time-bar').css('background-image', '-ms-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-}
 
 // Generate a new question
 function nextQuestion() {
   console.clear();
 
-  scored = false;
-  skipped = false;
+  currentState = STATE.ASKING;
 
   setTimeBar(100);
   time = 100 * timeMax;
 
-  var wordset = pickNextTermSet(),
-    type = wordset[0],
-    terms = wordset[1],
-    pos = wordset[2];
+  var wordSet = pickNextTermSet();
+  currentTerm = getRandom(wordSet[1]);
+  currentTermType = wordSet[0];
 
-  var term = terms[Math.floor(Math.random() * terms.length)];
-  termType = type;
-  $('#part').text(pos);
+  var question = new Question(currentTerm);
+  question.modify(currentTermType);
+  correctAnswers = ([question.word, question.hiragana]).filter(filterFalse);
 
-  var question = new Question(term);
-  question.modify(type);
-  correct = ([question.word, question.hiragana]).filter(filterFalse);
-  quiz_term = term;
-
-  $('#question-word').html(term.render());
-  $('#meaning').html(term.definition());
+  $('#question-word').html(currentTerm.render());
+  $('#meaning').html(currentTerm.definition());
+  $('#grammarType').text(wordSet[2]);
   $('#mods .mod').remove();
   $('#answer').val('');
   $('#well').data('mods', question.modifiers.map(listCopy));
@@ -251,7 +125,61 @@ function nextQuestion() {
   fadeInMods(question.modifiers);
 }
 
+// Check if the answer is correct every time a character is typed
+function checkAnswer() {
+  var answer = $('#answer').val().replace(/\s/g, '');
+
+  if (correctAnswers.indexOf(answer) > -1) {
+    currentState = STATE.EVALUATED;
+
+    $('#answer').addClass('flash');
+    setTimeout(function(){
+      $('#answer').removeClass('flash');
+    }, 300);
+
+    if (time > 0) {
+      score += Math.ceil(time * currentMultiplier / timeMax);
+      currentMultiplier += 1;
+      timeMax *= 0.95;
+    } else {
+      currentMultiplier = 1;
+      timeMax = _timeMax;
+    }
+
+    addWell(answer, correctAnswers, currentTerm, true);
+    $('#score').text(score);
+    $('#mult').text(currentMultiplier);
+  }
+}
+
+// Skips a question and shows the correct answer
+function skipQuestion() {
+  currentState = STATE.EVALUATED;
+
+  time = -1;
+  currentMultiplier = 1;
+
+  $('#mult').text(currentMultiplier);
+  $('#answer').addClass('flash-red');
+  $('#time-bar').css('background', '#e74c3c');
+  addWell($('#answer').val() || '', correctAnswers, currentTerm, false);
+  $('#answer').val(correctAnswers[0]);
+  setTimeout(function() {
+    $('#answer').removeClass('flash-red');
+  }, 300);
+}
+
+// Sets time remaining bar to the percentage passed in
+function setTimeBar(percent) {
+  $('#time-bar').css('background-image', 'linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  $('#time-bar').css('background-image', '-o-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  $('#time-bar').css('background-image', '-moz-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  $('#time-bar').css('background-image', '-webkit-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  $('#time-bar').css('background-image', '-ms-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+}
+
 // Function for animating the mods falling in
+// TODO(andrea): this looks really crazy now, fix
 function fadeInMods(modList) {
   var $space = $('<div/>', {class: 'space'});
   $space.text('.');
@@ -332,84 +260,14 @@ function initializeTermSets() {
 
 // Timer function called 100 times per second
 function interval() {
-  if (skipped || scored)
+  if (currentState == STATE.EVALUATED || time == 0) {
     return;
+  }
 
   time--;
   setTimeBar(time/timeMax);
 }
-
 var t = setInterval(interval, 10);
-
-function addWell(actual, expected, rootword, isCorrect) {
-  var mods = $('#well')
-      .data('mods')
-      .filter(filterFalse)
-      .join(", ");
-
-  var def = $("#meaning").text();
-  if (!def) {
-    return;
-  }
-
-  var w = $('<div/>')
-      .addClass('wellitem')
-      .data({
-        type: termType,
-        term: rootword
-      });
-
-  w.append(
-      $("<span/>")
-          .addClass("well-right")
-          .addClass("mods")
-          .append(def + " &mdash; ")
-          .append(mods + " ")
-          .append(
-              $("<span/>")
-                  .addClass('debug')
-                  .text('≟')
-                  .attr({
-                    title: "Click to view conjugations."
-                  })
-          )
-  );
-
-  var expected_link = $("<a/>")
-      .html($.unique(expected).join('<br />'))
-      .addClass("answers")
-      .attr({
-        href: "http://jisho.org/search/" + encodeURIComponent(rootword),
-        target: "jisho",
-        title: "Jisho - " + rootword + " - click Show Inflections to review conjugations."
-      });
-
-  var wellLeft = $("<div />")
-      .addClass("well-left")
-      .append(expected_link);
-
-  if (isCorrect) {
-    w.addClass('correct').append(wellLeft);
-  } else {
-    if(actual.replace(/\s/g,'')) {
-      wellLeft.prepend(
-          $('<span/>')
-              .addClass("response")
-              .addClass('striken')
-              .html(actual + "<br />")
-      );
-    }
-
-    w.addClass('skipped')
-        .append(wellLeft);
-  }
-
-  w.append(
-      $('<div/>').addClass('clear')
-  );
-
-  $('#well').prepend(w);
-}
 
 function configString() {
   return $("#option-menu input:checkbox:checked")
@@ -421,33 +279,6 @@ function configString() {
       return a + b;
     })
     .toString(36);
-}
-
-function setConfig(str) {
-  str=""+str;
-  if (!str.length) {
-    return;
-  }
-  var bits = parseInt("" + str, 36, 10);
-  $("#option-menu input:checkbox").each(
-    function() {
-      var bval = +$(this).data('cfg');
-      $(this).prop("checked", !!(bits & bval));
-    });
-}
-
-function checkConfig(opts) {
-  var i, id;
-  for (i = 0; i < opts.length; i++) {
-    if(opts[i] == 'base') {
-      continue;
-    }
-    id = '#opt-' + opts[i];
-    if ($(id).filter(":checked").length == 0) {
-      return false;
-    }
-  }
-  return true;
 }
 
 function filterSets(sets) {

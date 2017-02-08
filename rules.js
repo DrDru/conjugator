@@ -46,6 +46,7 @@ function Modifier(flags, modFunc) {
 
 var Mogrify = {
   _mog: function(kana, index) {
+    var base;
     for (base in KANA_FAMILY) {
       if (KANA_FAMILY[base].indexOf(kana) != -1) {
         return KANA_FAMILY[base][index];
