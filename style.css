@@ -1,9 +1,6 @@
 /* Basic element styling */
 html {
     font-family: "Hiragino Maru Gothic Pro", Osaka, "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -121,10 +118,6 @@ button:hover {
     width: 52px;
     height: 22px;
     border-radius: 50px;
-    -webkit-transition: all .5s ease;
-    -moz-transition: all .5s ease;
-    -o-transition: all .5s ease;
-    -ms-transition: all .5s ease;
     transition: all .5s ease;
     cursor: pointer;
     position: absolute;
@@ -172,8 +165,6 @@ button:hover {
     float: left;
     margin-right: 5px;
     padding: 0px 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
     border-radius: 5px;
 }
 
@@ -216,49 +207,23 @@ button:hover {
 }
 
 .flash {
-  -moz-animation: flash 0.5s ease-out;
-  -moz-animation-iteration-count: 1;
-  -webkit-animation: flash 0.5s ease-out;
-  -webkit-animation-iteration-count: 1;
-  -ms-animation: flash 0.5s ease-out;
-  -ms-animation-iteration-count: 1;
+    animation-name: flash;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-out;
 }
 
-@-webkit-keyframes flash {
-    0% { background-color: #3498db;}
-    100% {background-color: none;}
-}
-
-@-moz-keyframes flash {
-    0% { background-color: #3498db;}
-    100% {background-color: none;}
-}
-
-@-ms-keyframes flash {
+@keyframes flash {
     0% { background-color: #3498db;}
     100% {background-color: none;}
 }
 
 .flash-red {
-  -moz-animation: flashr 0.5s ease-out;
-  -moz-animation-iteration-count: 1;
-  -webkit-animation: flashr 0.5s ease-out;
-  -webkit-animation-iteration-count: 1;
-  -ms-animation: flashr 0.5s ease-out;
-  -ms-animation-iteration-count: 1;
+    animation-name: flashr;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-out;
 }
 
-@-webkit-keyframes flashr {
-    0% { background-color: #e74c3c;}
-    100% {background-color: none;}
-}
-
-@-moz-keyframes flashr {
-    0% { background-color: #e74c3c;}
-    100% {background-color: none;}
-}
-
-@-ms-keyframes flashr {
+@keyframes flashr {
     0% { background-color: #e74c3c;}
     100% {background-color: none;}
 }
@@ -267,10 +232,6 @@ button:hover {
     padding: 3px;
     border-radius: 6px;
     background-image: linear-gradient(left, #3498db 50%, #ecf0f1 50%);
-    background-image: -o-linear-gradient(left, #3498db 50%, #ecf0f1 50%);
-    background-image: -moz-linear-gradient(left, #3498db 50%, #ecf0f1 50%);
-    background-image: -webkit-linear-gradient(left, #3498db 50%, #ecf0f1 50%);
-    background-image: -ms-linear-gradient(left, #3498db 50%, #ecf0f1 50%);
 }
 
 textarea:focus {
@@ -286,8 +247,6 @@ textarea {
     padding: 5px 10px;
     font-size: 25pt;
     font-family: "Hiragino Maru Gothic Pro", Osaka, "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
     border-radius: 5px;
 }
 
@@ -305,8 +264,6 @@ input[type=checkbox] {
   color: black;
   font-size: 15pt;
   padding: 0px 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
   border-radius: 5px;
 }
 
