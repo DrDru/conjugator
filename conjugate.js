@@ -1,8 +1,7 @@
 'use strict';
 
-
 var time = 0;
-
+// TOOD(andrea): why are there two of these?
 var _timeMax = 30;
 var timeMax = _timeMax;
 
@@ -50,10 +49,12 @@ $(document).ready(function() {
       } else if (currentState == STATE.EVALUATED) {
         nextQuestion();
       }
+      // swallow the keypress
       return false;
     }
   });
 
+  // TODO(andrea): rename from well, possibly also rename "debugTerm"
   $('#well').on('click', '.debug', debugTerm);
 
   generateOptions('adjective-options', [
@@ -235,6 +236,7 @@ function initializeTermSets() {
     termSets.push([GODAN, verbs_godan, '[godan] v.']);
   }
 
+  // TODO(andrea): add all this shit back when ready
   // if($("#opt-irregular:checked").length)
   // {
   //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);

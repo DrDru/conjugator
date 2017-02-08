@@ -39,6 +39,7 @@ function debugMod(term, mod, w, premods) {
   }
 }
 
+// TODO(andrea): why is this feature called "wells"? rename to something sensible
 function addWell(actual, expected, rootword, isCorrect) {
   var mods = $('#well')
       .data('mods')

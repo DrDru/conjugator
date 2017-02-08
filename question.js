@@ -1,3 +1,5 @@
+// TODO(andrea): document
+// TODO(andrea): don't allow direct access of private members
 function Question(term) {
   if (!(this instanceof Question)) {
     return new Question(term);
@@ -19,6 +21,7 @@ Question.prototype.modify = function(modSet) {
   this.modifiers.push.apply(this.modifiers, modifier.description);
 };
 
+// TODO(andrea): this doesn't really belong here -- utils.js? :/
 // Fetches a random element of an array
 function getRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
