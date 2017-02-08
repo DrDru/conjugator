@@ -1,3 +1,5 @@
+'use strict';
+
 var verbs_ichidan = [
   new Term(['あ','ける'], ['開',''], 'to open'),
   new Term(['あげる'], [''], 'to give'),
@@ -23,7 +25,7 @@ var verbs_ichidan = [
   new Term(['お','れる'], ['折',''], 'to be broken; to snap'),
   new Term(['か','える'], ['変',''], 'to change'),
   new Term(['か','える'], ['換',''], 'to change (clothes)'),
-  new Term(['かか','える'], ['抱',''], 'to hold (in your arms), have')
+  new Term(['かか','える'], ['抱',''], 'to hold (in your arms), have'),
   new Term(['かか','げる'], ['掲',''], 'to raise (a flag); to hold up'),
   new Term(['かける'], [''], 'to hang; to call on the phone; to risk'),
   new Term(['かさ','ねる'], ['重',''], 'to pile up; to repeat'),
@@ -54,7 +56,7 @@ var verbs_ichidan = [
   new Term(['こし','か','ける'], ['腰','掛',''], 'to sit (western style)'),
   new Term(['こしら','える'], ['拵',''], 'to make; to manufacture'),
   new Term(['こた','える'], ['答',''], 'to answer'),
-  new Term(['こぼれる', [''], 'to spill; to overflow'),
+  new Term(['こぼれる'], [''], 'to spill; to overflow'),
   new Term(['こわ','れる'], ['壊',''], 'to break'),
   new Term(['さ','ける'], ['避',''], 'to avoid; to dodge'),
   new Term(['さ','げる'], ['下',''], 'to lower; to hang'),

@@ -1,3 +1,5 @@
+'use strict';
+
 var KANA_FAMILY = {
     V: ['わ','い','う','え','お'],
 

@@ -1,3 +1,5 @@
+'use strict';
+
 var to_be_iru = [
   new Term('いる', null, null, 'to be (animate)'),
 ];

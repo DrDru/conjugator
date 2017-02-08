@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * An object containing all the fields needed for conjugating and rendering a term.
  *

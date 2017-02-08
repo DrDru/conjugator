@@ -1,3 +1,5 @@
+'use strict';
+
 // Adds an label to the options menu
 function genLabel(desc) {
   var $label = $('<div/>', {class: 'option-label'});
