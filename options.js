@@ -1,5 +1,14 @@
 'use strict';
 
+var OPTION_IDS = {
+  GODAN: 'godan',
+  I_ADJ: 'iadj',
+  ICHIDAN: 'ichidan',
+  IRREGULAR: 'irregular',
+  NA_ADJ: 'naadj',
+  TO_BE: 'to_be'
+};
+
 var generateOptions = function(id, opts) {
   opts.forEach(function(opt) {
     opt[1] = "opt-" + opt[1];
@@ -42,18 +51,4 @@ function setConfig(str) {
         var bval = +$(this).data('cfg');
         $(this).prop("checked", !!(bits & bval));
       });
-}
-
-function checkConfig(opts) {
-  var i, id;
-  for (i = 0; i < opts.length; i++) {
-    if (opts[i] == 'base') {
-      continue;
-    }
-    id = '#opt-' + opts[i];
-    if ($(id).filter(":checked").length == 0) {
-      return false;
-    }
-  }
-  return true;
 }

@@ -1,26 +1,41 @@
 'use strict';
 
-var time = 0;
-// TOOD(andrea): why are there two of these?
-var _timeMax = 30;
-var timeMax = _timeMax;
+
+
 
 var STATE = {
   ASKING: 0,
   EVALUATED: 1
 };
+var maxTime = 30;
 
+// game state variables
 var correctAnswers = '';
 var currentMultiplier = 1;
 var currentState = STATE.ASKING;
 var currentTerm = '';
 var currentTermType = '';
 var score = 0;
+var time = 0;
 var termSets = null;
+
+// non-interactable UI elements
+var definitionField = $('#meaning');
+var grammarTypeField = $('#grammarType');
+var multiplierField = $('#mult');
+var questionField = $('#question-word');
+var renameMe = $('#well');
+var scoreField = $('#score');
+var timeBar = $('#time-bar');
+
+// interactable UI elements
+var answerTextBox = $('#answer');
+var optionsButton = $('#options');
+var playButton = $('#play');
 
 $(document).ready(function() {
   // When the play button is clicked
-  $('#play').add("#options-play").click(function() {
+  playButton.add("#options-play").click(function() {
     nextQuestion();
     $('body')
         .removeClass('start')
@@ -28,7 +43,7 @@ $(document).ready(function() {
         .addClass('game');
   });
 
-  $('#options').click(function() {
+  optionsButton.click(function() {
     $('body')
         .removeClass('start')
         .removeClass('game')
@@ -36,13 +51,13 @@ $(document).ready(function() {
   });
 
   // Bind the game logic to keyup/keydown handlers on the answer text field.
-  $('#answer').bind('keyup', function(e) {
+  answerTextBox.bind('keyup', function(e) {
     if (currentState == STATE.ASKING) {
       checkAnswer();
       return true;
     }
   });
-  $('#answer').bind('keydown', function(e) {
+  answerTextBox.bind('keydown', function(e) {
     if ((e.keyCode || e.which) == 13) {
       if (currentState == STATE.ASKING) {
         skipQuestion();
@@ -55,11 +70,12 @@ $(document).ready(function() {
   });
 
   // TODO(andrea): rename from well, possibly also rename "debugTerm"
-  $('#well').on('click', '.debug', debugTerm);
+  renameMe.on('click', '.debug', debugTerm);
 
+  var ids = OPTION_IDS;
   generateOptions('adjective-options', [
-    ['い adjectives', 'iadj'],
-    ['な adjectives', 'naadj']
+    ['い adjectives', ids.I_ADJ],
+    ['な adjectives', ids.NA_ADJ]
   ]);
 
   generateOptions('conjugation-options', [
@@ -80,10 +96,10 @@ $(document).ready(function() {
   ]);
 
   generateOptions('verb-options',[
-    ['To be (いる, ある)', 'to_be'],
-    ['Ichidan (-いる,　-える)', 'ichidan'],
-    ['Irregular (する,　来る)', 'irregular'],
-    ['Godan', 'godan']
+    ['To be (いる, ある)', ids.TO_BE],
+    ['Ichidan (-いる,　-える)', ids.ICHIDAN],
+    ['Irregular (する,　来る)', ids.IRREGULAR],
+    ['Godan', ids.GODAN]
   ]);
 
   generateOptions('kanji-options',[
@@ -106,7 +122,7 @@ function nextQuestion() {
   currentState = STATE.ASKING;
 
   setTimeBar(100);
-  time = 100 * timeMax;
+  time = 100 * maxTime;
 
   var wordSet = pickNextTermSet();
   currentTerm = getRandom(wordSet[1]);
@@ -116,40 +132,38 @@ function nextQuestion() {
   question.modify(currentTermType);
   correctAnswers = ([question.word, question.hiragana]).filter(filterFalse);
 
-  $('#question-word').html(currentTerm.render());
-  $('#meaning').html(currentTerm.definition());
-  $('#grammarType').text(wordSet[2]);
+  questionField.html(currentTerm.render());
+  definitionField.html(currentTerm.definition());
+  grammarTypeField.text(wordSet[2]);
   $('#mods .mod').remove();
-  $('#answer').val('');
-  $('#well').data('mods', question.modifiers.map(listCopy));
+  answerTextBox.val('');
+  renameMe.data('mods', question.modifiers.map(listCopy));
 
   setTimeout(function() { fadeInMods(question.modifiers); }, 1000);
 }
 
 // Check if the answer is correct every time a character is typed
 function checkAnswer() {
-  var answer = $('#answer').val().replace(/\s/g, '');
+  var answer = answerTextBox.val().replace(/\s/g, '');
 
   if (correctAnswers.indexOf(answer) > -1) {
     currentState = STATE.EVALUATED;
 
     $('#answer').addClass('flash');
-    setTimeout(function(){
+    setTimeout(function() {
       $('#answer').removeClass('flash');
     }, 300);
 
     if (time > 0) {
-      score += Math.ceil(time * currentMultiplier / timeMax);
+      score += Math.ceil(time * currentMultiplier / maxTime);
       currentMultiplier += 1;
-      timeMax *= 0.95;
     } else {
       currentMultiplier = 1;
-      timeMax = _timeMax;
     }
 
     addWell(answer, correctAnswers, currentTerm, true);
-    $('#score').text(score);
-    $('#mult').text(currentMultiplier);
+    scoreField.text(score);
+    multiplierField.text(currentMultiplier);
   }
 }
 
@@ -160,19 +174,19 @@ function skipQuestion() {
   time = -1;
   currentMultiplier = 1;
 
-  $('#mult').text(currentMultiplier);
-  $('#answer').addClass('flash-red');
-  $('#time-bar').css('background', '#e74c3c');
-  addWell($('#answer').val() || '', correctAnswers, currentTerm, false);
-  $('#answer').val(correctAnswers[0]);
+  multiplierField.text(currentMultiplier);
+  answerTextBox.addClass('flash-red');
+  timeBar.css('background', '#e74c3c');
+  addWell(answerTextBox.val() || '', correctAnswers, currentTerm, false);
+  answerTextBox.val(correctAnswers[0]);
   setTimeout(function() {
-    $('#answer').removeClass('flash-red');
+    answerTextBox.removeClass('flash-red');
   }, 300);
 }
 
 // Sets time remaining bar to the percentage passed in
 function setTimeBar(percent) {
-  $('#time-bar').css('background-image', 'linear-gradient(to right, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  timeBar.css('background-image', 'linear-gradient(to right, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
 }
 
 // Function for animating the mods falling in
@@ -217,58 +231,52 @@ function pickNextTermSet() {
 
 function initializeTermSets() {
   termSets = [];
-  if ($("#opt-ichidan:checked").length) {
+  var ids = OPTION_IDS;
+  if (isSelected(ids.ICHIDAN)) {
     termSets.push([ICHIDAN, verbs_ichidan, '[ichidan] v.']);
   }
-  if ($("#opt-godan:checked").length) {
+  if (isSelected(ids.GODAN)) {
     termSets.push([GODAN, verbs_godan, '[godan] v.']);
   }
+  if (isSelected(ids.NA_ADJ)) {
+    termSets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
+  }
+  if (isSelected(ids.I_ADJ)) {
+    termSets.push([I_ADJECTIVE, adjective_i, '[i] adj.']);
+  }
+  if (isSelected(ids.IRREGULAR)) {
+    termSets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
+    termSets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
+  }
+  if (isSelected(ids.TO_BE)) {
+    termSets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
+    termSets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
+  }
 
-  // TODO(andrea): add all this shit back when ready
-  // if($("#opt-irregular:checked").length)
-  // {
-  //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
-  //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
-  // }
-  //
-  // if($("#opt-naadj:checked").length)
-  //   sets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
-  //
-  // if($("#opt-iadj:checked").length)
-  //   sets.push([II_ADJECTIVE, adjective_i, '[i] adj.']);
-  //
-  // // keep last
-  // if($("#opt-to_be:checked").length || !sets.length)
-  // {
-  //   sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
-  //   sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
-  // }
+  if (!termSets.length) {
+    // TODO(andrea): if user has chosen no options, throw an error here
+  }
 
   // remove config-disabled modifiers
   filterSets(termSets);
 }
 
-// Timer function called 100 times per second
-function interval() {
-  if (currentState == STATE.EVALUATED || time == 0) {
-    return;
-  }
-
-  time = Math.max(0, time - 1);
-  setTimeBar(time/timeMax);
+function isSelected(optionName) {
+  return $('#opt-' + optionName + ':checked').length == 1;
 }
-var t = setInterval(interval, 10);
 
-function configString() {
-  return $("#option-menu input:checkbox:checked")
-    .map(function() {
-      return $(this).data('cfg')
-    })
-    .toArray()
-    .reduce(function(a,b) {
-      return a + b;
-    })
-    .toString(36);
+function checkConfig(opts) {
+  var i, id;
+  for (i = 0; i < opts.length; i++) {
+    if (opts[i] == 'base') {
+      continue;
+    }
+    id = '#opt-' + opts[i];
+    if ($(id).filter(":checked").length == 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function filterSets(sets) {
@@ -282,6 +290,29 @@ function filterSets(sets) {
 function filterMod(mod) {
   var i, flags = mod.flag;
   return checkConfig(flags);
+}
+
+// Timer function called 100 times per second
+function interval() {
+  if (currentState == STATE.EVALUATED || time == 0) {
+    return;
+  }
+
+  time = Math.max(0, time - 1);
+  setTimeBar(time / timeMax);
+}
+var t = setInterval(interval, 10);
+
+function configString() {
+  return $("#option-menu input:checkbox:checked")
+    .map(function() {
+      return $(this).data('cfg')
+    })
+    .toArray()
+    .reduce(function(a,b) {
+      return a + b;
+    })
+    .toString(36);
 }
 
 // l.filter(filterFalse)
