@@ -243,7 +243,7 @@ button:hover {
 }
 
 #time-bar {
-    padding: 3px;
+    padding: 12px 0 12px 10px;
     border-radius: 6px;
     background-image: linear-gradient(left, #3498db 50%, #ecf0f1 50%);
 }
@@ -253,17 +253,19 @@ textarea:focus {
 }
 
 textarea {
-    border: 0;
-    resize: none;
     background-color: #ecf0f1;
-    width: 98%;
-    height: 1em;
-    padding: 5px 10px;
-    font-size: 37pt;
+    border: 0;
+    border-radius: 6px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    display: block;
+    height: 1.2em;
+    font-size: 35pt;
     font-family: "Hiragino Maru Gothic Pro", Osaka, "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
-    border-radius: 5px;
-    margin: 1px 0 0 1px;
     overflow: hidden;
+    resize: none;
+    width: 100%;
 }
 
 input[type=checkbox] {

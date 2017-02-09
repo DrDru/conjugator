@@ -299,7 +299,7 @@ function interval() {
   }
 
   time = Math.max(0, time - 1);
-  setTimeBar(time / timeMax);
+  setTimeBar(time / maxTime);
 }
 var t = setInterval(interval, 10);
 
