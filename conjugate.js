@@ -235,19 +235,18 @@ function initializeTermSets() {
   if ($("#opt-godan:checked").length) {
     termSets.push([GODAN, verbs_godan, '[godan] v.']);
   }
+  if ($("#opt-naadj:checked").length) {
+    termSets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
+  }
+  if($("#opt-iadj:checked").length) {
+    termSets.push([I_ADJECTIVE, adjective_i, '[i] adj.']);
+  }
 
-  // TODO(andrea): add all this shit back when ready
   // if($("#opt-irregular:checked").length)
   // {
   //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
   //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
   // }
-  //
-  // if($("#opt-naadj:checked").length)
-  //   sets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
-  //
-  // if($("#opt-iadj:checked").length)
-  //   sets.push([II_ADJECTIVE, adjective_i, '[i] adj.']);
   //
   // // keep last
   // if($("#opt-to_be:checked").length || !sets.length)
