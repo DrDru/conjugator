@@ -123,7 +123,7 @@ function nextQuestion() {
   $('#answer').val('');
   $('#well').data('mods', question.modifiers.map(listCopy));
 
-  fadeInMods(question.modifiers);
+  setTimeout(function() { fadeInMods(question.modifiers); }, 1000);
 }
 
 // Check if the answer is correct every time a character is typed
@@ -172,29 +172,17 @@ function skipQuestion() {
 
 // Sets time remaining bar to the percentage passed in
 function setTimeBar(percent) {
-  $('#time-bar').css('background-image', 'linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-  $('#time-bar').css('background-image', '-o-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-  $('#time-bar').css('background-image', '-moz-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-  $('#time-bar').css('background-image', '-webkit-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-  $('#time-bar').css('background-image', '-ms-linear-gradient(left, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
+  $('#time-bar').css('background-image', 'linear-gradient(to right, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
 }
 
 // Function for animating the mods falling in
-// TODO(andrea): this looks really crazy now, fix
 function fadeInMods(modList) {
-  var $space = $('<div/>', {class: 'space'});
-  $space.text('.');
-  var $toAdd = $('<div/>', {class: 'mod', style: 'display:none'});
-  $toAdd.text(modList.shift());
-  $space.insertBefore('#mod-clear');
-  $toAdd.insertBefore('#mod-clear');
-  $('.space').animate({width: '0px'}, 300);
-  $('.mod').fadeIn(300);
+  var mod = $('<div class="mod"/>').text(modList.shift());
+  $('#mods').append(mod);
   if (modList.length > 0) {
     setTimeout(function() {
-        $('.space').remove();
-        fadeInMods(modList);
-    }, 300);
+      fadeInMods(modList);
+    }, 250);
   }
 }
 
@@ -266,7 +254,7 @@ function interval() {
     return;
   }
 
-  time--;
+  time = Math.max(0, time - 1);
   setTimeBar(time/timeMax);
 }
 var t = setInterval(interval, 10);

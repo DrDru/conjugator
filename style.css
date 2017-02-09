@@ -62,7 +62,7 @@ button:hover {
 }
 
 .start #start-screen, .game #game-screen, .options #options-screen {
-    margin-top: 0;
+    margin-top: 2em;
     opacity: 1;
     transition: 1s;
 }
@@ -140,7 +140,7 @@ button:hover {
 #question {
     font-size: 30pt;
     line-height: 1em;
-    margin: 1em 0 1em 0;
+    margin-bottom: 1em;
 }
 
 #def {
@@ -162,21 +162,31 @@ button:hover {
 
 #mods {
     margin-bottom: 1em;
+    overflow: hidden;
+    padding: 10px;
+    font-family: sans-serif;
+    font-size: 14pt;
 }
 
 .mod {
-    font-family: sans-serif;
     display: inline;
-    font-size: 14pt;
     color: #ecf0f1;
     background: #555;
     margin-right: 5px;
     padding: 10px;
     border-radius: 5px;
+    animation-name: mod-slide;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-in;
 }
 
 .mod:hover {
     background: #13a4e7;
+}
+
+@keyframes mod-slide {
+    0%   { margin-left: 100%; }
+    100% { margin-left: 0; }
 }
 
 .space {
@@ -217,8 +227,8 @@ button:hover {
 }
 
 @keyframes flash {
-    0% { background-color: #3498db;}
-    100% {background-color: none;}
+    0%   { background-color: #3498db; }
+    100% { background-color: none; }
 }
 
 .flash-red {
@@ -253,6 +263,7 @@ textarea {
     font-family: "Hiragino Maru Gothic Pro", Osaka, "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
     border-radius: 5px;
     margin: 1px 0 0 1px;
+    overflow: hidden;
 }
 
 input[type=checkbox] {
