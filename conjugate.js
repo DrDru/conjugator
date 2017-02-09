@@ -238,25 +238,51 @@ function initializeTermSets() {
   if ($("#opt-naadj:checked").length) {
     termSets.push([NA_ADJECTIVE, adjective_na, '[na] adj.']);
   }
-  if($("#opt-iadj:checked").length) {
+  if ($("#opt-iadj:checked").length) {
     termSets.push([I_ADJECTIVE, adjective_i, '[i] adj.']);
   }
+  if ($("#opt-irregular:checked").length) {
+    termSets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
+    termSets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
+  }
+  if ($("#opt-to_be:checked").length) {
+    termSets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
+    termSets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
+  }
 
-  // if($("#opt-irregular:checked").length)
-  // {
-  //   sets.push([IRREGULAR_SURU, irregular_suru, '[irregular] v.']);
-  //   sets.push([IRREGULAR_KURU, irregular_kuru, '[irregular] v.']);
-  // }
-  //
-  // // keep last
-  // if($("#opt-to_be:checked").length || !sets.length)
-  // {
-  //   sets.push([TO_BE_IRU, to_be_iru, '[to be] v.']);
-  //   sets.push([TO_BE_ARU, to_be_aru, '[to be] v.']);
-  // }
+  if (!termSets.length) {
+    // TODO(andrea): if user has chosen no options, throw an error here
+  }
 
   // remove config-disabled modifiers
   filterSets(termSets);
+}
+
+function checkConfig(opts) {
+  var i, id;
+  for (i = 0; i < opts.length; i++) {
+    if (opts[i] == 'base') {
+      continue;
+    }
+    id = '#opt-' + opts[i];
+    if ($(id).filter(":checked").length == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function filterSets(sets) {
+  var i = 0;
+  for (i; i < sets.length; i++) {
+    sets[i][0] = sets[i][0].filter(filterMod);
+  }
+  return sets;
+}
+
+function filterMod(mod) {
+  var i, flags = mod.flag;
+  return checkConfig(flags);
 }
 
 // Timer function called 100 times per second
@@ -280,19 +306,6 @@ function configString() {
       return a + b;
     })
     .toString(36);
-}
-
-function filterSets(sets) {
-  var i = 0;
-  for (i; i < sets.length; i++) {
-    sets[i][0] = sets[i][0].filter(filterMod);
-  }
-  return sets;
-}
-
-function filterMod(mod) {
-  var i, flags = mod.flag;
-  return checkConfig(flags);
 }
 
 // l.filter(filterFalse)

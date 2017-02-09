@@ -43,17 +43,3 @@ function setConfig(str) {
         $(this).prop("checked", !!(bits & bval));
       });
 }
-
-function checkConfig(opts) {
-  var i, id;
-  for (i = 0; i < opts.length; i++) {
-    if (opts[i] == 'base') {
-      continue;
-    }
-    id = '#opt-' + opts[i];
-    if ($(id).filter(":checked").length == 0) {
-      return false;
-    }
-  }
-  return true;
-}
