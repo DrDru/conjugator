@@ -139,7 +139,18 @@ function nextQuestion() {
   answerTextBox.val('');
   renameMe.data('mods', question.modifiers.map(listCopy));
 
-  setTimeout(function() { fadeInMods(question.modifiers); }, 1000);
+  setTimeout(function() { fadeInMods(question.modifiers); }, 400);
+}
+
+// Function for animating the mods falling in
+function fadeInMods(modList) {
+  var mod = $('<div class="mod"/>').text(modList.shift());
+  $('#mods').append(mod);
+  if (modList.length > 0) {
+    setTimeout(function() {
+      fadeInMods(modList);
+    }, 300);
+  }
 }
 
 // Check if the answer is correct every time a character is typed
@@ -187,17 +198,6 @@ function skipQuestion() {
 // Sets time remaining bar to the percentage passed in
 function setTimeBar(percent) {
   timeBar.css('background-image', 'linear-gradient(to right, #3498db ' + percent + '%, #ecf0f1 ' + percent + '%)');
-}
-
-// Function for animating the mods falling in
-function fadeInMods(modList) {
-  var mod = $('<div class="mod"/>').text(modList.shift());
-  $('#mods').append(mod);
-  if (modList.length > 0) {
-    setTimeout(function() {
-      fadeInMods(modList);
-    }, 250);
-  }
 }
 
 // Picks a set of terms to choose the new question term from.
