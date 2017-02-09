@@ -1,5 +1,14 @@
 'use strict';
 
+var OPTION_IDS = {
+  GODAN: 'godan',
+  I_ADJ: 'iadj',
+  ICHIDAN: 'ichidan',
+  IRREGULAR: 'irregular',
+  NA_ADJ: 'naadj',
+  TO_BE: 'to_be'
+};
+
 var generateOptions = function(id, opts) {
   opts.forEach(function(opt) {
     opt[1] = "opt-" + opt[1];
