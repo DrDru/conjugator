@@ -57,7 +57,7 @@ button:hover {
 }
 
 .game #title, .options #title {
-    font-size: 20pt;
+    font-size: 15pt;
     padding: 10px 0;
     transition: 1s;
 }
@@ -153,7 +153,6 @@ button:hover {
 #question {
     font-size: 30pt;
     line-height: 1em;
-    margin-bottom: 0.5em;
 }
 
 #question-word {
@@ -180,19 +179,18 @@ button:hover {
 
 #mods {
     margin-left: -3px;
-    margin-bottom: 1em;
     overflow: hidden;
     padding: 10px 0;
     font-family: sans-serif;
     font-size: 13pt;
-    min-height: 35px;
+    min-height: 40px;
 }
 
 .mod {
     display: inline-block;
     color: #ecf0f1;
     background: #555;
-    margin-right: 5px;
+    margin: 0 5px 5px 0;
     padding: 7px;
     border-radius: 5px;
     animation-name: appear;
@@ -216,16 +214,19 @@ button:hover {
 }
 
 #scoreboard {
-    font-family: Consolas, monospace;
-    position: absolute;
-    top: 2em;
-    right: 2em;
     background: #ecf0f1;
-    padding: 10px;
     border-radius: 5px;
-    width: 150px;
-    text-align: right;
+    font-family: Consolas, monospace;
+    padding: 10px;
+    position: absolute;
     font-size: 1.2em;
+    overflow: hidden;
+    right: 2em;
+    text-align: right;
+    text-overflow: ellipsis;
+    top: 2em;
+    white-space: nowrap;
+    width: 100px;
 }
 
 .lb-text {
@@ -263,7 +264,7 @@ button:hover {
 }
 
 #time-bar {
-    margin: 5px;
+    margin: 0 5px;
     padding: 12px 10px;
     border-radius: 6px;
     background-image: linear-gradient(left, #3498db 50%, #ecf0f1 50%);
