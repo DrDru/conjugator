@@ -36,8 +36,12 @@ function genOption(desc) {
 }
 
 function genFullOption(target, label, opt) {
-  target.append(genLabel(label));
-  target.append(genOption(opt));
+  var $container = $('<div/>', {class: 'checkboxContainer'});
+  var $labelContainer = $('<div/>', {class: 'labelContainer'});
+  $labelContainer.append(genLabel(label));
+  $container.append($labelContainer);
+  $container.append(genOption(opt));
+  target.append($container);
 }
 
 function setConfig(str) {

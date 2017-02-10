@@ -50,7 +50,7 @@ button:hover {
 }
 
 #screen-container {
-    max-width: 600px;
+    max-width: 800px;
     position: relative;
     margin: 0 auto;
     padding: 2em;
@@ -78,23 +78,32 @@ button:hover {
     clear: both;
 }
 
+.checkboxContainer {
+    display: inline-block;
+}
+
+.labelContainer {
+    display: inline-block;
+}
+
 .option-label {
-    float: left;
+    display: inline-block;
     font-size: 16pt;
-    padding-top: 4px;
-    width: 280px;
+    padding-top: 10px;
+    width: 240px;
     height: 40px;
-    top: 5px;
+    top: 10px;
+    position: relative;
 }
 
 .check-box {
+    display: inline-block;
     width: 120px;
     height: 40px;
     background: #ecf0f1;
     border-radius: 50px;
     position: relative;
-    float: left;
-    margin-right: 80px;
+    margin-right: 40px;
 }
 
 .check-box:before {
