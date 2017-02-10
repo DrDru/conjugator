@@ -19,6 +19,11 @@ var score = 0;
 var time = 0;
 var termSets = null;
 
+// game screens
+var startScreen = $('#start-screen');
+var optionsScreen = $('#options-screen');
+var gameScreen = $('#game-screen');
+
 // non-interactable UI elements
 var definitionField = $('#meaning');
 var grammarTypeField = $('#grammarType');
@@ -34,6 +39,10 @@ var optionsButton = $('#options');
 var playButton = $('#play');
 
 $(document).ready(function() {
+  show(startScreen);
+  hide(optionsScreen);
+  hide(gameScreen);
+
   // When the play button is clicked
   playButton.add("#options-play").click(function() {
     nextQuestion();
@@ -41,6 +50,9 @@ $(document).ready(function() {
         .removeClass('start')
         .removeClass('options')
         .addClass('game');
+    show(gameScreen);
+    hide(optionsScreen);
+    hide(startScreen);
   });
 
   optionsButton.click(function() {
@@ -48,6 +60,9 @@ $(document).ready(function() {
         .removeClass('start')
         .removeClass('game')
         .addClass('options');
+    show(optionsScreen);
+    hide(startScreen);
+    hide(gameScreen);
   });
 
   // Bind the game logic to keyup/keydown handlers on the answer text field.
@@ -114,6 +129,18 @@ $(document).ready(function() {
   });
   setConfig(location.hash.replace(/^\#/, ''));
 });
+
+function hide(element) {
+  element
+      .removeClass('show')
+      .addClass('hide');
+}
+
+function show(element) {
+  element
+      .removeClass('hide')
+      .addClass('show');
+}
 
 // Generate a new question
 function nextQuestion() {

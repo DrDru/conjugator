@@ -29,6 +29,14 @@ button:hover {
     color: black;
 }
 
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
 /* Global styles */
 #title {
     margin: 0;
@@ -43,8 +51,8 @@ button:hover {
 
 #screen-container {
     position: relative;
-    width: 960px;
     margin: 0 auto;
+    padding: 2em;
 }
 
 .game #title, .options #title {
@@ -54,9 +62,6 @@ button:hover {
 }
 
 #start-screen, #game-screen, #options-screen {
-    position: absolute;
-    margin: 1000px auto 0 auto;
-    width: 960px;
     opacity: 0;
     transition: 1s;
 }
