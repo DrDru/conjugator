@@ -209,8 +209,8 @@ button:hover {
 #scoreboard {
     font-family: Consolas, monospace;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 2em;
+    right: 2em;
     background: #ecf0f1;
     padding: 10px;
     border-radius: 5px;
@@ -286,14 +286,14 @@ input[type=checkbox] {
 
 /**/
 #well {
-    margin-top:32px;
+    margin: 32px 5px;
 }
 
 .wellitem {
   margin: 4px 0;
   color: black;
   font-size: 15pt;
-  padding: 0px 5px;
+  padding: 8px;
   border-radius: 5px;
 }
 
@@ -322,11 +322,11 @@ input[type=checkbox] {
 }
 
 .correct {
-  background: #8abc83;
+  background: #8fc389;
 }
 
 .skipped {
-    background: #e74c3c;
+    background: #ff9f99;
 }
 
 .striken{
