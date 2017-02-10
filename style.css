@@ -50,6 +50,7 @@ button:hover {
 }
 
 #screen-container {
+    max-width: 600px;
     position: relative;
     margin: 0 auto;
     padding: 2em;
@@ -63,11 +64,9 @@ button:hover {
 
 #start-screen, #game-screen, #options-screen {
     opacity: 0;
-    transition: 1s;
 }
 
 .start #start-screen, .game #game-screen, .options #options-screen {
-    margin-top: 2em;
     opacity: 1;
     transition: 1s;
 }
@@ -145,12 +144,17 @@ button:hover {
 #question {
     font-size: 30pt;
     line-height: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
+}
+
+#question-word {
+    margin-bottom: 5px;
 }
 
 #def {
     font-size: 18pt;
     font-family: sans-serif;
+    line-height: 1.2em;
 }
 
 #meaning {
@@ -166,21 +170,23 @@ button:hover {
 }
 
 #mods {
+    margin-left: -3px;
     margin-bottom: 1em;
     overflow: hidden;
-    padding: 10px;
+    padding: 10px 0;
     font-family: sans-serif;
-    font-size: 14pt;
+    font-size: 13pt;
+    min-height: 35px;
 }
 
 .mod {
-    display: inline;
+    display: inline-block;
     color: #ecf0f1;
     background: #555;
     margin-right: 5px;
-    padding: 10px;
+    padding: 7px;
     border-radius: 5px;
-    animation-name: mod-slide;
+    animation-name: appear;
     animation-duration: 0.3s;
     animation-timing-function: ease-in;
 }
@@ -189,9 +195,9 @@ button:hover {
     background: #13a4e7;
 }
 
-@keyframes mod-slide {
-    0%   { margin-left: 100%; }
-    100% { margin-left: 0; }
+@keyframes appear {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .space {
@@ -248,6 +254,7 @@ button:hover {
 }
 
 #time-bar {
+    margin: 5px;
     padding: 12px 10px;
     border-radius: 6px;
     background-image: linear-gradient(left, #3498db 50%, #ecf0f1 50%);
