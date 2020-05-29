@@ -73,7 +73,9 @@ var Mogrify = {
 
 var godan_te = function(w) {
 	
-  ### Add exception for Iku	
+  //  Add exception for Iku	
+  if (w == '行く') { w = '行う' }
+  
   var e, l = snipLast(w);
   switch (l) {
     case 'す':
