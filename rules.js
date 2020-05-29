@@ -72,6 +72,8 @@ var Mogrify = {
 };
 
 var godan_te = function(w) {
+	
+  ### Add exception for Iku	
   var e, l = snipLast(w);
   switch (l) {
     case 'す':
@@ -468,7 +470,7 @@ var GODAN = [
   Modifier([ModTypes.FORMAL], function(w) {
     return trimLast(w) + Mogrify.I(snipLast(w)) + 'ます';
   }),
-  // polite progressive
+  // polite progressive 
   Modifier([ModTypes.FORMAL, ModTypes.PROGRESSIVE], function(w) {
     return godan_te(w) + 'います';
   }),
@@ -596,13 +598,13 @@ var I_ADJECTIVE = [
     return trimLast(w) + 'くない';
   }),
   Modifier([ModTypes.FORMAL, ModTypes.NEGATIVE], function(w){
-    return trimLast(w) + 'くありません';
+    return trimLast(w) + 'くないです'; //'くありません';
   }),
   Modifier([ModTypes.NEGATIVE, ModTypes.PAST], function(w){
     return trimLast(w) + 'くなかった';
   }),
   Modifier([ModTypes.FORMAL, ModTypes.NEGATIVE, ModTypes.PAST], function(w){
-    return trimLast(w) + 'くありませんでした';
+    return trimLast(w) +  'くないでした';   //'くありませんでした';
   }),
   Modifier(ModTypes.TE, function(w){
     return trimLast(w) + 'くて';
